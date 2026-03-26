@@ -82,8 +82,8 @@ class InquirerControl(FormattedTextControl):
                 else:
                     tokens.append(('', '  ', select_item))
                 # 'o ' - FISHEYE
-                if choice[2]:  # disabled
-                    tokens.append(('', '- %s (%s)' % (choice[0], choice[2])))
+                if line[2]:  # disabled
+                    tokens.append(('', '- %s (%s)' % (line[0], line[2])))
                 else:
                     if selected:
                         tokens.append(('class:selected', '{} '.format(self.selected_sign), select_item))
@@ -93,8 +93,8 @@ class InquirerControl(FormattedTextControl):
                     if pointed_at:
                         tokens.append(('[SetCursorPosition]', ''))
 
-                    if choice[3]:  # description
-                        tokens.append(('', "%s - %s" % (line_name, choice[3])))
+                    if line[3]:  # description
+                        tokens.append(('', "%s - %s" % (line_name, line[3])))
                     else:
                         tokens.append(('', line_name, select_item))
                 tokens.append(('', '\n'))
@@ -160,7 +160,10 @@ def question(message, **kwargs):
                            ' (<up>, <down> to move, <space> to select, <a> '
                            'to toggle, <i> to invert)'))
             if not ic.answered_correctly:
-                tokens.append((Token.Error, ' Error: %s' % ic.error_message))
+                # Use 'class:error' style consistent with prompt_toolkit style tuples.
+                # Previously referenced Token.Error from pygments which was never
+                # imported in this module, causing a NameError on validation failure.
+                tokens.append(('class:error', ' Error: %s' % ic.error_message))
         return tokens
 
     # assemble layout
